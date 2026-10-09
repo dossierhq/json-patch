@@ -69,7 +69,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 3 * * 2')
     timeout-minutes: 10
     permissions:
-      contents: write # push branch with updated mise.toml/.nvmrc/package.json/pnpm-lock.yaml
+      contents: write # push branch with updated mise.toml/package.json/pnpm-lock.yaml
       pull-requests: write # open the tool-update PR
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -90,14 +90,6 @@ jobs:
             jq --arg version "pnpm@$PNPM_VERSION" '.packageManager = $version' package.json > package.json.tmp
             mv package.json.tmp package.json
             echo "Updated packageManager to pnpm@$PNPM_VERSION"
-          fi
-
-      - name: Sync Node version in .nvmrc
-        run: |
-          NODE_VERSION=$(grep "^node = " mise.toml | sed 's/node = "\(.*\)"/\1/')
-          if [ -n "$NODE_VERSION" ]; then
-            echo "$NODE_VERSION" > .nvmrc
-            echo "Updated .nvmrc to $NODE_VERSION"
           fi
 
       # pnpm records its own version under packageManagerDependencies in

@@ -40,7 +40,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - run: pnpm config set store-dir .pnpm-store
-      - run: mise settings add idiomatic_version_file_enable_tools node
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build, lint, type-check, test
