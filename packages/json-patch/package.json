@@ -1,6 +1,6 @@
 {
   "name": "@dossierhq/json-patch",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Strict, bounded JSON Patch (RFC 6902) and JSON Pointer (RFC 6901): parse, apply and diff with explicit limits",
   "keywords": [
     "diff",
