@@ -38,12 +38,6 @@ export const strykerPlugins = [
   }),
 ];
 
-// vitest-runner 10.0.0 is patched (pnpm-workspace.yaml `patchedDependencies`, patches/):
-// it joins a suite chain and its test name with a space, where Vitest 5 matches
-// `testNamePattern` against them joined with " > ", so unpatched no nested test runs against
-// its mutant and every one of them survives (stryker-mutator/stryker-js#6210). Drop the
-// patch with the vitest-runner release that fixes it; pnpm refuses to install until then
-// anyway, since the patch names this exact version.
 export default {
   testRunner: "vitest",
   plugins: ["@stryker-mutator/vitest-runner", import.meta.url],
