@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/node": "^26.6.3",
     "eslint-plugin-turbo": "^2.11.5",
-    "fallow": "^3.30.0",
+    "fallow": "^3.31.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "oxfmt": "^0.70.0",
