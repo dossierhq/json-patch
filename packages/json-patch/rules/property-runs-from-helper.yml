@@ -1,0 +1,19 @@
+id: property-runs-from-helper
+message: |
+  `fc.assert` must take its parameters from `propertyParameters(baseRuns)`.
+note: |
+  `src/test/property-runs.ts` scales a property's run count by
+  PROPERTY_RUN_MULT and replays a counterexample from PROPERTY_SEED /
+  PROPERTY_PATH, which is how `pnpm test:hunt` runs the properties many times
+  over without editing a test file. An `fc.assert` with a literal `numRuns`, or
+  with no parameters at all, runs at its base count however hard the hunt asks,
+  and looks hunted when it was not. Give the test `propertyTimeoutMs(base)` as
+  its timeout too, so a long hunt is not cut short.
+severity: error
+language: Tsx
+files:
+  - "src/**"
+rule:
+  pattern: fc.assert($$$ARGS)
+  not:
+    pattern: fc.assert($PROPERTY, propertyParameters($RUNS))

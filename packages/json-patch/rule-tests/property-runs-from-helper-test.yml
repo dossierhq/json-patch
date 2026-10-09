@@ -1,0 +1,6 @@
+id: property-runs-from-helper
+valid:
+  - "fc.assert(fc.property(arb, check), propertyParameters(100));"
+invalid:
+  - "fc.assert(fc.property(arb, check));"
+  - "fc.assert(fc.property(arb, check), { numRuns: 100 });"

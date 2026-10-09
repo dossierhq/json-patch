@@ -1,0 +1,37 @@
+id: no-recursion
+message: |
+  A function that calls itself: walk with an explicit stack instead.
+note: |
+  Everything this library walks — a patch value, a pointer, a part of the document —
+  comes from someone else, and its depth is theirs to choose. A recursive walk turns a
+  deep enough value into a RangeError from the engine: a crash the result type cannot
+  report, at a depth that differs between engines. Every walk in src/ keeps an explicit
+  stack, whose size its budget bounds. The rule sees a function or method calling itself
+  by name; mutual recursion it does not, so keep call graphs acyclic by construction.
+  Tests may recurse (their inputs are small and known).
+severity: error
+language: Tsx
+files:
+  - "src/**"
+ignores:
+  - "**/*.test.ts"
+  - "src/test/**"
+rule:
+  any:
+    - all:
+        - kind: function_declaration
+        - has: { field: name, pattern: $F }
+        - has:
+            stopBy: end
+            kind: call_expression
+            has: { field: function, pattern: $F }
+    - all:
+        - kind: method_definition
+        - has: { field: name, pattern: $M }
+        - has:
+            stopBy: end
+            kind: call_expression
+            has:
+              field: function
+              kind: member_expression
+              has: { field: property, pattern: $M }

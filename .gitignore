@@ -1,0 +1,9 @@
+node_modules/
+.pnpm-store/
+.turbo/
+.fallow/
+dist/
+coverage/
+.DS_Store
+.playwright-mcp/
+.claude/settings.local.json

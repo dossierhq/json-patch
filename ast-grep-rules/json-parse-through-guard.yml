@@ -1,0 +1,28 @@
+id: json-parse-through-guard
+message: |
+  Don't cast `JSON.parse` output; take it as `unknown` and narrow it with a parser or guard.
+note: |
+  `JSON.parse` returns whatever the text holds, so a cast to a type asserts a shape no
+  one checked, and a wrong frame, row or file then fails somewhere far from where it was
+  read. Assign it to `unknown` and narrow it with a guard or a parser (`parseStoredPatch`
+  for a stored patch), which is where the cast belongs once the shape is checked. A
+  round-trip of a value already checked, or a read of data the same code wrote, keeps
+  its cast behind `// ast-grep-ignore: json-parse-through-guard` with the reason. Test
+  files are exempt. The rule catches the cast; the `typescript/no-unsafe-*` lint rules
+  catch the `any` assigned, returned or passed on without one.
+severity: error
+language: Tsx
+files:
+  - "src/**"
+ignores:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.bench.ts"
+  - "src/test/**"
+  - "test/**"
+rule:
+  pattern: JSON.parse($$$ARGS) as $TYPE
+constraints:
+  TYPE:
+    not:
+      regex: "^unknown$"

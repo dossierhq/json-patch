@@ -1,0 +1,107 @@
+id: computed-keys-through-own-keys
+message: |
+  `table[key]` under a computed key: read and write own properties only (`Object.hasOwn` and `Object.defineProperty`), or keep the table in a `Map`.
+note: |
+  A plain object inherits Object.prototype, so a bracket access under a user-controlled
+  key answers an inherited member for an entry that is not there ("constructor",
+  "toString", …) and an assignment through "__proto__" swaps the prototype instead of
+  storing the entry. Every prototype-pollution fix in the parent project was one such
+  site. Rather than guard each one, the only legal spellings of a computed key are:
+    - a `Map` (`get`/`set`/`has`) for a table that is not persisted JSON;
+    - `Object.entries` / `Object.fromEntries` for an own-key walk or build;
+    - `array.at(i)` for an array read — but ONLY where `i` is known to be a non-negative
+      integer: `.at(NaN)` is `.at(0)` and `.at(-1)` is the last element, where `[NaN]`
+      and `[-1]` are undefined, so an index parsed from a string is range-checked first;
+    - a helper whose semantics are own-property whatever the key (`Object.hasOwn` +
+      `Object.defineProperty`, see src/json-value.ts) — for a JSON-shaped table.
+  A string, number or SUBSTITUTION-FREE template-literal index is exempt (the code chose
+  the key); `table[`${key}`]` is `table[key]` and is not. So is the COUNTER of the
+  nearest enclosing `for (let i = 0; …)` / `for (let i = xs.length - 1; i >= 0; …)`
+  loop, provided EVERY occurrence of `i` inside that loop is a read: its header
+  declaration, `i++`, an operand of a comparison or arithmetic, a subscript index, a
+  call argument, the right side of an assignment or declaration. Any binding or
+  assignment of `i`, of any shape and anywhere in the loop (a reassignment, an inner
+  `const i`, a parameter, a destructuring, a `for (i of …)`, a `catch (i)`), voids the
+  exemption — a blacklist of forms cannot establish "numeric counter", a read-only
+  whitelist can. Such a counter is a non-negative integer, which no prototype member
+  name is — and a typed array's byte loop stays a bracket loop, `.at` on a typed array
+  being ~45x slower. RESIDUAL: the rule matches spellings, so `\u0069` (which the
+  engine reads as `i`) is not seen as the counter; the rule guards a mistake, not a
+  contributor evading it — a source-level ban on escape sequences in identifiers is
+  what would close that.
+severity: error
+language: Tsx
+files:
+  - "src/**"
+ignores:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.bench.ts"
+  - "src/test/**"
+  - "test/**"
+rule:
+  kind: subscript_expression
+  has:
+    field: index
+    not:
+      any:
+        - kind: string
+        - kind: number
+        - kind: template_string
+          not:
+            has:
+              kind: template_substitution
+  # The index is the counter of the nearest enclosing counting loop, and every
+  # occurrence of it inside that loop is a read (see note).
+  not:
+    all:
+      - has:
+          field: index
+          kind: identifier
+          pattern: $I
+      - inside:
+          kind: for_statement
+          stopBy:
+            kind: for_statement
+          any:
+            - pattern: for (let $I = 0; $$$C; $$$U) $BODY
+            - pattern: for (let $I = $L.length - 1; $I >= 0; $$$U) $BODY
+          not:
+            has:
+              stopBy: end
+              pattern: $I
+              not:
+                any:
+                  - inside:
+                      any:
+                        - kind: update_expression
+                        - kind: binary_expression
+                        - kind: subscript_expression
+                        - kind: arguments
+                        - kind: template_substitution
+                        - kind: array
+                        - kind: object
+                        - kind: pair
+                        - kind: return_statement
+                  - inside:
+                      field: value
+                      kind: variable_declarator
+                  - inside:
+                      field: key
+                      kind: pair_pattern
+                  - inside:
+                      field: right
+                      any:
+                        - kind: assignment_expression
+                        - kind: augmented_assignment_expression
+                  - inside:
+                      field: object
+                      kind: member_expression
+                  - inside:
+                      field: name
+                      kind: variable_declarator
+                      inside:
+                        kind: lexical_declaration
+                        inside:
+                          field: initializer
+                          kind: for_statement

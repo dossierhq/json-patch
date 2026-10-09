@@ -1,0 +1,6 @@
+id: no-for-in
+valid:
+  - "for (const key of Object.keys(object)) use(key);"
+  - "for (const [key, value] of Object.entries(object)) use(key, value);"
+invalid:
+  - "for (const key in object) use(key);"

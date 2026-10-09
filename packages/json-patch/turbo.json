@@ -1,0 +1,16 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      // Read by src/test/property-runs.ts: they change how many runs the
+      // properties make, so a run under them is not the everyday run's cache hit.
+      "env": ["PROPERTY_RUN_MULT", "PROPERTY_SEED", "PROPERTY_PATH"],
+      // The coverage report is a fallow input (merged into the root map, see
+      // .fallowrc.json), so a cache hit has to restore it, not just replay the log.
+      "outputs": ["coverage/**"],
+      // The test script post-processes that report with a script outside the package
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/scripts/relativize-coverage.ts"]
+    }
+  }
+}

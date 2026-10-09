@@ -1,0 +1,40 @@
+name: zizmor
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/**"]
+  pull_request:
+    paths: [".github/workflows/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    name: Audit workflows
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          # SARIF upload to the Security tab needs GitHub Advanced Security,
+          # which isn't available on this private repo. Use inline PR
+          # annotations instead.
+          advanced-security: false
+          annotations: true
+          # Pedantic surfaces concurrency/permissions hygiene issues without
+          # the auditor-only secrets-outside-env findings (which would require
+          # repo-wide GitHub Environment setup to address).
+          persona: pedantic
+          # Drop low-confidence opinionated findings (e.g. superfluous-actions
+          # flagging peter-evans/create-pull-request).
+          min-confidence: medium

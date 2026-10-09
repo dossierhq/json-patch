@@ -1,0 +1,7 @@
+if command -v mise >/dev/null 2>&1; then
+  PNPM="mise exec -- pnpm"
+else
+  PNPM="pnpm"
+fi
+
+$PNPM -w lint:staged

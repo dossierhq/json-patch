@@ -1,0 +1,20 @@
+id: todo-cites-issue
+message: |
+  A TODO names the GitHub issue that tracks it, as `TODO(#123): …`, or
+  `TODO(https://github.com/owner/repo/issues/123): …` for another repository's issue.
+  A FIXME, XXX or HACK becomes such a TODO.
+note: |
+  A bare TODO, FIXME, XXX or HACK has no owner and no record of what finishing it means, so it
+  outlives the reason it was written. Open an issue for the work and cite it in the TODO; the
+  comment then stays greppable by issue number and is removed with the fix.
+severity: error
+language: Tsx
+rule:
+  kind: comment
+  any:
+    - regex: "\\b(FIXME|XXX|HACK)\\b"
+    - regex: "\\bTODO([^(]|$)"
+    - all:
+        - regex: "\\bTODO\\("
+        - not:
+            regex: "TODO\\((#\\d+|https://github\\.com/[\\w.-]+/[\\w.-]+/issues/\\d+)\\)"

@@ -1,0 +1,24 @@
+packages:
+  - packages/*
+
+allowBuilds:
+  "@ast-grep/cli": true
+  esbuild: true
+
+blockExoticSubdeps: true
+
+# 7d in minutes
+minimumReleaseAge: 10080
+# strict mode breaks Dependabot's `pnpm update --no-save`; remove once dependabot/dependabot-core#16375 is fixed
+minimumReleaseAgeStrict: false
+# if a security fix is younger than minimumReleaseAge, pin the exact version via
+# overrides rather than adding a minimumReleaseAgeExclude entry here — excluding a
+# whole dependency disables the safeguard for all its future versions. If an entry
+# is unavoidable, drop it again once that version ages past the 7d window.
+minimumReleaseAgeExclude: []
+
+onlyBuiltDependencies: []
+
+overrides: {}
+
+updateNotifier: false

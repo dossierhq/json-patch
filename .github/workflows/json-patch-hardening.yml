@@ -1,0 +1,110 @@
+name: json-patch hardening
+# The two runs of packages/json-patch that are too slow or too random for the CI gate
+# (see packages/json-patch/README.md, "Testing strategy"):
+#  - fuzz: Jazzer.js, coverage-guided, nightly. A crash fails the job and uploads the input;
+#    pin it under packages/json-patch/fuzz/regressions/ once fixed, and the gate replays it.
+#  - mutate: Stryker mutation testing, weekly. Fails below the `break` threshold in
+#    stryker.config.mjs; the HTML report names every surviving mutant.
+on:
+  schedule:
+    - cron: "30 3 * * *" # fuzz, daily at 03:30 UTC
+    - cron: "30 4 * * 0" # mutate, Sundays at 04:30 UTC
+  workflow_dispatch:
+    inputs:
+      run:
+        description: Which run
+        type: choice
+        options: [fuzz, mutate, both]
+        default: both
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz:
+    name: Fuzz (Jazzer.js)
+    if: >-
+      (github.event_name == 'schedule' && github.event.schedule == '30 3 * * *') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run != 'mutate')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          minimum_release_age: 7d
+      - name: pnpm cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - run: pnpm config set store-dir .pnpm-store
+      - run: mise settings add idiomatic_version_file_enable_tools node
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # The corpus grows run over run: libFuzzer keeps every input that reached new
+      # coverage, and tomorrow's run starts from today's instead of from the seeds alone.
+      - name: Fuzz corpus
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: packages/json-patch/fuzz/corpus
+          key: json-patch-fuzz-corpus-${{ github.run_id }}
+          restore-keys: |
+            json-patch-fuzz-corpus-
+      - name: Fuzz for 15 minutes
+        run: pnpm --filter @dossierhq/json-patch fuzz
+        env:
+          FUZZ_SECONDS: "900"
+      - name: Upload crashing inputs
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: json-patch-fuzz-crashes
+          path: packages/json-patch/fuzz/crashes/
+          if-no-files-found: warn
+          retention-days: 30
+
+  mutate:
+    name: Mutation testing (Stryker)
+    if: >-
+      (github.event_name == 'schedule' && github.event.schedule == '30 4 * * 0') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run != 'fuzz')
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          minimum_release_age: 7d
+      - name: pnpm cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      - run: pnpm config set store-dir .pnpm-store
+      - run: mise settings add idiomatic_version_file_enable_tools node
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Mutation testing
+        run: pnpm --filter @dossierhq/json-patch mutate
+      - name: Upload the mutation report
+        if: always()
+        continue-on-error: true # tolerate artefact storage quota exhaustion
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: json-patch-mutation-report
+          path: packages/json-patch/reports/mutation/
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // The library runs in Workers and browsers as well as Node: nothing it ships may lean on
+    // Node's globals, which only the tests use.
+    "types": [],
+    "noEmit": false,
+    "allowImportingTsExtensions": false
+  },
+  "exclude": [
+    "oxlint.config.ts",
+    "vitest.config.ts",
+    "vitest.stryker.config.ts",
+    "stryker.config.mjs",
+    "dist/",
+    "fuzz/",
+    "**/*.test.ts",
+    "src/test/**"
+  ]
+}

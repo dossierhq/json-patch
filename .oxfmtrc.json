@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "experimentalSortImports": true,
+  "ignorePatterns": [
+    "pnpm-lock.yaml",
+    "**/dist/",
+    "packages/json-patch/src/conformance/*.json",
+    "packages/json-patch/fuzz/regressions/"
+  ]
+}

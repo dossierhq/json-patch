@@ -1,0 +1,9 @@
+[settings]
+minimum_release_age = "7d"
+
+[tools]
+node = "26.10.0"
+pnpm = "12.8.1"
+
+[env]
+FALLOW_UPDATE_CHECK = "off"

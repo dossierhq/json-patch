@@ -1,0 +1,32 @@
+id: promise-returning-rejects
+message: |
+  This function returns a Promise but throws before one exists: make it `async`, or return `Promise.reject(...)`.
+note: |
+  A caller of a Promise-returning function handles failure with `.catch` or `await`
+  inside try. A synchronous throw skips `.catch` and escapes a fire-and-forget call
+  entirely. An `async` function turns every throw into a rejection; a throw inside a
+  `new Promise` executor or a nested callback is not flagged, since it rejects or runs
+  later. Only a return type annotated as `Promise<…>` is checked: an inferred one, a
+  union such as `Promise<T> | undefined` or a `PromiseLike` is not.
+severity: error
+language: Tsx
+rule:
+  kind: throw_statement
+  inside:
+    # The nearest enclosing function, not one further out.
+    stopBy:
+      any:
+        - kind: function_declaration
+        - kind: method_definition
+        - kind: arrow_function
+        - kind: function_expression
+    any:
+      - kind: function_declaration
+      - kind: method_definition
+      - kind: arrow_function
+      - kind: function_expression
+    has:
+      field: return_type
+      regex: "^:\\s*Promise<"
+    not:
+      regex: "^(?:(?:public|private|protected|static|override)\\s+)*async\\b"

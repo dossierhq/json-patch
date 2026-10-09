@@ -1,0 +1,10 @@
+id: no-recursion
+valid:
+  - "function walk(value) { const stack = [value]; while (stack.length) stack.pop(); }"
+  - "function outer() { return inner(); } function inner() { return 1; }"
+  - "class A { run() { return this.other(); } other() { return 1; } }"
+invalid:
+  - "function walk(value) { return walk(value.child); }"
+  - "function walk(value) { return [value].map((child) => walk(child)); }"
+  - "class A { walk(value) { return this.walk(value.child); } }"
+  - "class A { #walk(value) { return this.#walk(value.child); } }"

@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/fallow/schema.json",
+  "entry": ["packages/json-patch/oxlint.config.ts", "packages/json-patch/vitest.stryker.config.ts"],
+  "health": {
+    "coverage": "packages/json-patch/coverage/coverage-final.json"
+  },
+  "rules": {
+    "unused-dev-dependencies": "error"
+  },
+  "overrides": [],
+  "ignoreExports": [],
+  "duplicates": {
+    "minTokens": 125,
+    "minLines": 10,
+    "ignore": []
+  }
+}

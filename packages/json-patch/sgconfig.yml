@@ -1,0 +1,8 @@
+ruleDirs:
+  - rules
+  # The prototype-safety rules at the repo root (ast-grep-rules/).
+  - ../../ast-grep-rules
+testConfigs:
+  - testDir: rule-tests
+languageGlobs:
+  tsx: ["*.ts"]

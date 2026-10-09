@@ -1,0 +1,15 @@
+{
+  // Type-checks the fuzz scripts, which Node runs as TypeScript directly (type
+  // stripping): relative imports name their `.ts` files, and the target imports the
+  // package by its own name — resolved to src/ here, to the built dist/ at run time.
+  "extends": "@repo/typescript-config/library.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "lib": ["es2023", "es2024.string"],
+    "types": ["node"],
+    "paths": { "@dossierhq/json-patch": ["../src/index.ts"] }
+  },
+  "include": ["*.ts"]
+}

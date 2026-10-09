@@ -1,0 +1,22 @@
+id: no-object-assign
+message: |
+  `Object.assign` copies through `[[Set]]`; spread the source instead (`{ ...target, ...source }`).
+note: |
+  `Object.assign(target, source)` assigns each of `source`'s own keys with `[[Set]]`,
+  so a source carrying an own "__proto__" key (which `JSON.parse` produces without
+  complaint) swaps `target`'s prototype instead of copying the entry. Object spread,
+  `Object.fromEntries` and `structuredClone` all DEFINE own properties and are safe
+  whatever the source. Runtime code has no `Object.assign` call that spread cannot
+  express; test files are exempt.
+severity: error
+language: Tsx
+files:
+  - "src/**"
+ignores:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.bench.ts"
+  - "src/test/**"
+  - "test/**"
+rule:
+  pattern: Object.assign($$$ARGS)

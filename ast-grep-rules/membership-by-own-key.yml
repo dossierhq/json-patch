@@ -1,0 +1,30 @@
+id: membership-by-own-key
+message: |
+  `key in table` walks the prototype chain; ask `Object.hasOwn(table, key)` (or a `Map`).
+note: |
+  On a plain object `"constructor" in table` and `"toString" in table` are true for
+  every table, so an `in` test under a user-controlled key reports an entry that is
+  not there — the shape behind issue #1785. Test membership with `Object.hasOwn`, or
+  keep the table in a `Map` and ask `has`. A STRING-LITERAL left operand is exempt:
+  `"anyOf" in rule` narrows a union by a key the code chose, not one the user did.
+  Test files are exempt.
+severity: error
+language: Tsx
+files:
+  - "src/**"
+ignores:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.bench.ts"
+  - "src/test/**"
+  - "test/**"
+rule:
+  kind: binary_expression
+  all:
+    - has:
+        field: operator
+        regex: "^in$"
+    - has:
+        field: left
+        not:
+          kind: string

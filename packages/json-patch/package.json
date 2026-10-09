@@ -1,0 +1,44 @@
+{
+  "name": "@dossierhq/json-patch",
+  "version": "0.1.0",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "oxlint --deny-warnings && ast-grep scan --error --color=never && ast-grep test --skip-snapshot-tests",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "check-types": "tsc --noEmit && tsc -p fuzz",
+    "test": "vitest --run --coverage && node ../../scripts/relativize-coverage.ts coverage/coverage-final.json",
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest",
+    "test:hunt": "node ../../scripts/hunt-properties.ts",
+    "mutate": "stryker run",
+    "fuzz": "tsc -p tsconfig.build.json && node fuzz/seed-corpus.ts && jazzer fuzz/patch.fuzz.mjs fuzz/corpus --sync -i json-patch/dist/ -- -max_total_time=${FUZZ_SECONDS:-300} -artifact_prefix=fuzz/crashes/",
+    "fuzz:replay": "tsc -p tsconfig.build.json && jazzer fuzz/patch.fuzz.mjs --sync -i json-patch/dist/ -- -runs=1"
+  },
+  "devDependencies": {
+    "@ast-grep/cli": "^0.45.3",
+    "@jazzer.js/core": "^4.0.0",
+    "@repo/typescript-config": "workspace:*",
+    "@stryker-mutator/api": "^10.0.0",
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/vitest-runner": "^10.0.0",
+    "@types/node": "^26.6.3",
+    "@vitest/coverage-v8": "^4.1.11",
+    "fast-check": "^4.10.2",
+    "fast-json-patch": "^3.1.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  }
+}

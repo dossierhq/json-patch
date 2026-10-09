@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "command": "mise exec -- pnpm build",
+      "problemMatcher": ["$tsc", "$eslint-compact"],
+      "label": "build",
+      "group": "build"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "json-patch-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "turbo run --continue=dependencies-successful lint check-types build test && pnpm fallow:gate && pnpm check-types:scripts",
+    "ci:build": "mkdir -p .turbo && turbo run --continue=dependencies-successful --concurrency=2 lint check-types build test --summarize=true --profile=.turbo/profile.json && pnpm check-types:scripts",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "lint:staged": "lint-staged",
+    "check-types": "turbo run check-types",
+    "check-types:scripts": "tsc -p scripts/tsconfig.json",
+    "fallow": "fallow",
+    "fallow:coverage": "turbo run test --filter=@dossierhq/json-patch",
+    "check-coverage-map": "node scripts/check-coverage-map.ts",
+    "fallow:gate": "pnpm fallow:coverage && pnpm check-coverage-map && fallow audit --base origin/main && fallow dead-code && fallow dupes && fallow health --min-score 85",
+    "format": "oxfmt .",
+    "deps:outdated": "pnpm outdated -r",
+    "deps:update-interactive": "pnpm update -r -i --latest",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "eslint-plugin-turbo": "^2.11.5",
+    "fallow": "^3.30.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.86.0",
+    "oxlint-tsgolint": "^7.0.2003",
+    "turbo": "^2.11.5",
+    "typescript": "7.0.2"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json,jsonc,css,md,mdx,yml,yaml}": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "packageManager": "pnpm@12.8.1"
+}

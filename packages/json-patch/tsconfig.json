@@ -1,0 +1,24 @@
+{
+  "extends": "@repo/typescript-config/library.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    // String.prototype.isWellFormed (ES2024): the I-JSON string check.
+    "lib": ["es2023", "es2024.string"],
+    "types": ["node"],
+    // Node runs src/test/fuzz-oracle.ts (and what it imports) as TypeScript directly for the
+    // fuzz target: those imports name `.ts` files, and every file keeps to erasable syntax.
+    // Type-checking only; tsconfig.build.json emits, without them.
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true
+  },
+  "exclude": [
+    "oxlint.config.ts",
+    "vitest.config.ts",
+    "stryker.config.mjs",
+    "vitest.stryker.config.ts",
+    "dist/",
+    "fuzz/"
+  ]
+}

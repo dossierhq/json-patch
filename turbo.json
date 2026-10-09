@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "noUpdateNotifier": true,
+  "agentGuidance": false,
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      // Log-only by default; packages/json-patch/turbo.json declares its coverage report.
+      "outputs": []
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      // The package's oxlint config extends the root one and its sgconfig loads the
+      // shared ast-grep rules, so a change to either must miss the cache.
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/oxlint.config.ts",
+        "$TURBO_ROOT$/ast-grep-rules/**"
+      ]
+    },
+    "check-types": {
+      "dependsOn": ["^build", "^check-types"]
+    },
+    "format": {}
+  }
+}
