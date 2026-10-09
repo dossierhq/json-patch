@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write # changesets/action pushes the "Version Packages" branch; Publish pushes tags
+      contents: write # changesets/action pushes the "Version Packages" branch, tags and GitHub releases
       id-token: write # npm trusted publishing (OIDC): no npm token, provenance attached
       pull-requests: write # changesets/action opens/updates the "Version Packages" PR
     steps:
@@ -30,20 +30,17 @@ jobs:
           minimum_release_age: 7d
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      # With no pending changesets the action runs publish-script, which publishes any
+      # version not yet on the registry, then pushes the tag and creates the GitHub
+      # release. Trusted publishing: npm exchanges the job's OIDC token for a
+      # short-lived credential, so no NPM_TOKEN is written to .npmrc. The package
+      # lists this repo + workflow file as a trusted publisher on npmjs.com.
       - name: Create Release Pull Request or Publish to npm
-        id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          publish-script: pnpm run changeset:build-and-publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # Trusted publishing: npm exchanges the job's OIDC token for a short-lived publish
-      # credential, so no NPM_TOKEN is written to .npmrc. The package must list this
-      # repo + workflow file as a trusted publisher on npmjs.com.
-      - name: Publish
-        if: steps.changesets.outputs.hasChangesets == 'false' && contains(github.event.head_commit.message, 'Version Packages')
-        run: |
-          pnpm run changeset:build-and-publish
-          git push origin --tags
-        env:
           NPM_CONFIG_PROVENANCE: "true"
           TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
           TURBO_TEAM: ${{ vars.TURBO_TEAM }}
