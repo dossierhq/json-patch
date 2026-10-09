@@ -1,5 +1,11 @@
 name: CI
-on: push
+# pull_request as well as push: the "Version Packages" PR that changesets/action
+# opens is pushed with GITHUB_TOKEN, and GitHub does not fire push workflows for
+# those commits. Push is limited to main so human PRs do not run twice.
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
