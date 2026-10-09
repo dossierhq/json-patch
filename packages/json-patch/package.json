@@ -1,18 +1,39 @@
 {
   "name": "@dossierhq/json-patch",
   "version": "0.1.0",
+  "description": "Strict, bounded JSON Patch (RFC 6902) and JSON Pointer (RFC 6901): parse, apply and diff with explicit limits",
+  "keywords": [
+    "diff",
+    "json-patch",
+    "json-pointer",
+    "patch",
+    "rfc6901",
+    "rfc6902"
+  ],
+  "homepage": "https://github.com/dossierhq/json-patch/tree/main/packages/json-patch#readme",
+  "bugs": "https://github.com/dossierhq/json-patch/issues",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dossierhq/json-patch.git",
+    "directory": "packages/json-patch"
+  },
   "files": [
     "dist"
   ],
   "type": "module",
+  "sideEffects": false,
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "prepublishOnly": "tsc -p tsconfig.build.json",
     "build": "tsc -p tsconfig.build.json",
     "lint": "oxlint --deny-warnings && ast-grep scan --error --color=never && ast-grep test --skip-snapshot-tests",
     "lint:fix": "oxlint --fix",
