@@ -19,9 +19,13 @@
     "deps:update-interactive": "pnpm update -r -i --latest",
     "prepare": "husky",
     "fuzz": "pnpm -r fuzz",
-    "mutate": "pnpm -r mutate"
+    "mutate": "pnpm -r mutate",
+    "changeset:add": "changeset",
+    "changeset:bump-version": "changeset version",
+    "changeset:build-and-publish": "turbo run lint check-types build test && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@types/node": "^26.6.4",
     "eslint-plugin-turbo": "^2.11.7",
     "fallow": "^3.31.0",
