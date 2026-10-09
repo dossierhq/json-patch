@@ -1,5 +1,10 @@
 # @dossierhq/json-patch
 
+[![npm version](https://img.shields.io/npm/v/@dossierhq/json-patch)](https://www.npmjs.com/package/@dossierhq/json-patch)
+[![CI](https://github.com/dossierhq/json-patch/actions/workflows/ci.yml/badge.svg)](https://github.com/dossierhq/json-patch/actions/workflows/ci.yml)
+[![Hardening](https://github.com/dossierhq/json-patch/actions/workflows/hardening.yml/badge.svg)](https://github.com/dossierhq/json-patch/actions/workflows/hardening.yml)
+[![License: MIT](https://img.shields.io/npm/l/@dossierhq/json-patch)](https://github.com/dossierhq/json-patch/blob/main/LICENSE)
+
 A strict, bounded [RFC 6902](https://www.rfc-editor.org/rfc/rfc6902) JSON Patch **apply** and
 **diff** over JSON data, with [RFC 6901](https://www.rfc-editor.org/rfc/rfc6901) JSON Pointers.
 Zero runtime dependencies. Built for patches from people you do not trust, applied to
