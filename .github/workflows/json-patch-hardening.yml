@@ -47,7 +47,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - run: pnpm config set store-dir .pnpm-store
-      - run: mise settings add idiomatic_version_file_enable_tools node
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       # The corpus grows run over run: libFuzzer keeps every input that reached new
@@ -94,7 +93,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
       - run: pnpm config set store-dir .pnpm-store
-      - run: mise settings add idiomatic_version_file_enable_tools node
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Mutation testing
