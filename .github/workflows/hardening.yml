@@ -1,4 +1,4 @@
-name: json-patch hardening
+name: Hardening
 # The two runs of packages/json-patch that are too slow or too random for the CI gate
 # (see packages/json-patch/README.md, "Testing strategy"):
 #  - fuzz: Jazzer.js, coverage-guided, nightly. A crash fails the job and uploads the input;
@@ -55,18 +55,18 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: packages/json-patch/fuzz/corpus
-          key: json-patch-fuzz-corpus-${{ github.run_id }}
+          key: fuzz-corpus-${{ github.run_id }}
           restore-keys: |
-            json-patch-fuzz-corpus-
+            fuzz-corpus-
       - name: Fuzz for 15 minutes
-        run: pnpm --filter @dossierhq/json-patch fuzz
+        run: pnpm fuzz
         env:
           FUZZ_SECONDS: "900"
       - name: Upload crashing inputs
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: json-patch-fuzz-crashes
+          name: fuzz-crashes
           path: packages/json-patch/fuzz/crashes/
           if-no-files-found: warn
           retention-days: 30
@@ -96,13 +96,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Mutation testing
-        run: pnpm --filter @dossierhq/json-patch mutate
+        run: pnpm mutate
       - name: Upload the mutation report
         if: always()
         continue-on-error: true # tolerate artefact storage quota exhaustion
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: json-patch-mutation-report
+          name: mutation-report
           path: packages/json-patch/reports/mutation/
           if-no-files-found: warn
           retention-days: 30

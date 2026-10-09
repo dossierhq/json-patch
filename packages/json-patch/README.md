@@ -392,8 +392,8 @@ depends on a random run.
 ### Fuzzing (Jazzer.js)
 
 ```sh
-pnpm --filter @dossierhq/json-patch fuzz                    # 5 minutes
-FUZZ_SECONDS=3600 pnpm --filter @dossierhq/json-patch fuzz  # an hour
+pnpm fuzz                    # 5 minutes
+FUZZ_SECONDS=3600 pnpm fuzz  # an hour
 pnpm --filter @dossierhq/json-patch fuzz:replay fuzz/crashes/crash-…  # one input
 ```
 
@@ -434,7 +434,7 @@ object members) was found in 7 seconds. Its input is the first pinned regression
 ### Mutation testing (Stryker)
 
 ```sh
-pnpm --filter @dossierhq/json-patch mutate   # a few minutes; report in reports/mutation/index.html
+pnpm mutate   # a few minutes; report in reports/mutation/index.html
 ```
 
 [Stryker](https://stryker-mutator.io) plants one small change at a time in `src/`: a flipped
