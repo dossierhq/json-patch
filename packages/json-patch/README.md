@@ -454,8 +454,10 @@ not pin down. The run fails below `thresholds.break` in `stryker.config.mjs`.
   Weakening a check that never fires on correct code is equivalent by construction.
 - **Every other survivor is either killed or justified in the code.** A
   `// Stryker disable next-line <Mutator>: <why>` comment says why the mutant cannot change
-  anything observable. There are five: two of them are `compare`'s own shortcut past a
-  pass that would find nothing, kept for the 12% it saves.
+  anything observable. There are six, one of them a block: two are `compare`'s own
+  shortcut past a pass that would find nothing, kept for the 12% it saves; the block is
+  `kindOf`'s list of the `typeof` kinds that are not JSON, which the lint wants spelled out
+  and which return what falling out of the switch would.
 - **Load-time code.** `src/module-load.test.ts` imports the library inside a test. A mutant
   that breaks module loading fails every test file before any test runs, and Stryker's vitest
   runner reports that as "survived" rather than "killed". Without this test, every mutant
@@ -473,7 +475,7 @@ How the first runs went, as a record of what mutation testing found beyond 100% 
 | Gaps tested, dead code removed | 99.6% | 4                                                   |
 | Apply at 100% (`break: 100`)   | 100%  | 0 (1032 killed, 7 by timeout; 3 marked equivalent)  |
 | Diff added, first run          | 99.0% | 13                                                  |
-| Now                            | 100%  | 0 (1364 killed, 13 by timeout; 5 marked equivalent) |
+| Now                            | 100%  | 0 (1365 killed, 18 by timeout; 6 marked equivalent) |
 
 The gaps it found:
 
