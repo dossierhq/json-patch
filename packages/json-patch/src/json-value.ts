@@ -28,13 +28,16 @@ export function kindOf(value: unknown): JsonKind | undefined {
       return Number.isFinite(value) ? "number" : undefined;
     case "string":
       return "string";
-    case "object":
-      return containerKindOf(value);
+    // Stryker disable StringLiteral,ConditionalExpression: these kinds are listed because
+    // the lint wants the switch exhaustive; falling out of it returns the same undefined.
     case "bigint":
     case "function":
     case "symbol":
     case "undefined":
       return undefined;
+    // Stryker restore StringLiteral,ConditionalExpression
+    case "object":
+      return containerKindOf(value);
   }
 }
 
