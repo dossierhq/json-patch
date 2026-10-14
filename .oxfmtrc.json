@@ -4,6 +4,7 @@
   "experimentalSortImports": true,
   "ignorePatterns": [
     "pnpm-lock.yaml",
+    ".mise/locks/**",
     "**/dist/",
     "packages/json-patch/src/conformance/*.json",
     "packages/json-patch/fuzz/regressions/"
