@@ -15,11 +15,20 @@ minimumReleaseAgeStrict: false
 # overrides rather than adding a minimumReleaseAgeExclude entry here — excluding a
 # whole dependency disables the safeguard for all its future versions. If an entry
 # is unavoidable, drop it again once that version ages past the 7d window.
-minimumReleaseAgeExclude: []
+minimumReleaseAgeExclude:
+  # the exact fast-uri pin in overrides below; pnpm wrote this itself. Drop with
+  # that pin after 2026-10-27
+  - fast-uri@3.1.9
 
 onlyBuiltDependencies: []
 
-overrides: {}
+overrides:
+  # GHSA-x5fp-wj9c-mxmx et al.; typed-rest-client 2.3 (via @stryker-mutator/core)
+  # pins qs 6.15.1 exactly
+  "qs@6.15.1": ~6.16.1
+  # GHSA-w74x-v6f9-j3xg et al. (ajv via @stryker-mutator/core); pinned exact while
+  # younger than minimumReleaseAge, drop after 2026-10-27 once it ages past the window
+  "fast-uri@3.1.8": 3.1.9
 
 updateNotifier: false
 # vitest-runner 10.0.0 joins a suite chain and its test name with a space, where Vitest 5
