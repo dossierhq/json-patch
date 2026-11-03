@@ -35,7 +35,7 @@ jobs:
           # a later manual `git fetch` would not, since persist-credentials is
           # false on this private repo.
           fetch-depth: 0
-      - uses: jdx/mise-action@fc42bcc7ddbf51124c30f95a877a0c5168a3bfde # v5.2.1
+      - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
         with:
           minimum_release_age: 7d
       - name: pnpm cache
