@@ -40,6 +40,7 @@ jobs:
         with:
           minimum_release_age: 7d
       - name: pnpm cache
+        id: pnpm-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .pnpm-store
@@ -49,6 +50,12 @@ jobs:
       - run: pnpm config set store-dir .pnpm-store
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      # The cache is saved only when the lockfile changed, from a store that started as the
+      # previous entry (restore-keys), so without a prune every package version the lockfile ever
+      # held stays in it and the entry grows with each change, slowing down every restore.
+      - name: Prune the pnpm store before it is cached
+        if: steps.pnpm-cache.outputs.cache-hit != 'true'
+        run: pnpm store prune
       # The corpus grows run over run: libFuzzer keeps every input that reached new
       # coverage, and tomorrow's run starts from today's instead of from the seeds alone.
       - name: Fuzz corpus
@@ -86,6 +93,7 @@ jobs:
         with:
           minimum_release_age: 7d
       - name: pnpm cache
+        id: pnpm-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .pnpm-store
@@ -95,6 +103,12 @@ jobs:
       - run: pnpm config set store-dir .pnpm-store
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      # The cache is saved only when the lockfile changed, from a store that started as the
+      # previous entry (restore-keys), so without a prune every package version the lockfile ever
+      # held stays in it and the entry grows with each change, slowing down every restore.
+      - name: Prune the pnpm store before it is cached
+        if: steps.pnpm-cache.outputs.cache-hit != 'true'
+        run: pnpm store prune
       - name: Mutation testing
         run: pnpm mutate
       - name: Upload the mutation report
