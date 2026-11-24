@@ -27,14 +27,14 @@
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
     "@types/node": "^26.6.6",
-    "eslint-plugin-turbo": "^2.11.10",
+    "eslint-plugin-turbo": "^2.11.11",
     "fallow": "^3.39.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "oxfmt": "^0.76.0",
     "oxlint": "^1.91.0",
     "oxlint-tsgolint": "^7.0.2005",
-    "turbo": "^2.11.10",
+    "turbo": "^2.11.11",
     "typescript": "7.0.2"
   },
   "lint-staged": {
